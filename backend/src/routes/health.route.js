@@ -107,7 +107,8 @@ router.get('/', async (req, res) => {
       isQueueConnected = false;
     }
 
-    const isSystemHealthy = isDbConnected && isQueueConnected;
+    // System is healthy if DB is connected (queue is optional for basic operation)
+    const isSystemHealthy = isDbConnected;
 
     res.status(isSystemHealthy ? 200 : 503).json({
       status: isSystemHealthy ? 'success' : 'fail',
@@ -116,7 +117,7 @@ router.get('/', async (req, res) => {
       environment: env.NODE_ENV,
       checks: {
         database: isDbConnected ? 'connected' : 'disconnected',
-        queue: isQueueConnected ? 'connected' : 'disconnected',
+        queue: isQueueConnected ? 'connected' : 'disconnected (using direct processing)',
         ai: env.GEMINI_API_KEY ? 'configured' : 'missing_config',
       }
     });
