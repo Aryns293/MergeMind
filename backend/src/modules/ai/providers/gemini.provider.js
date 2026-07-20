@@ -6,9 +6,9 @@ import logger from '../../../utils/logger.js';
 class GeminiProvider {
   constructor() {
     this.genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
-    // Use gemini-1.5-flash since 2.5-flash is not available on this API key
-    this.model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-    this.fallbackModel = this.genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
+    // Use gemma-4-31b-it since user's free tier quota for gemini models is 0
+    this.model = this.genAI.getGenerativeModel({ model: 'gemma-4-31b-it' });
+    this.fallbackModel = this.genAI.getGenerativeModel({ model: 'gemma-4-26b-a4b-it' });
   }
 
   /**
@@ -21,7 +21,7 @@ class GeminiProvider {
     
     for (let modelIdx = 0; modelIdx < models.length; modelIdx++) {
       const model = models[modelIdx];
-      const modelName = modelIdx === 0 ? 'gemini-1.5-flash' : 'gemini-1.5-pro';
+      const modelName = modelIdx === 0 ? 'gemma-4-31b-it' : 'gemma-4-26b-a4b-it';
       
       for (let attempt = 0; attempt < 3; attempt++) {
         try {

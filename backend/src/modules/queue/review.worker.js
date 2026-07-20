@@ -48,7 +48,7 @@ export const processReviewJob = async (jobData) => {
       usage: {
         promptTokens: aiResult.usage.promptTokens,
         completionTokens: aiResult.usage.completionTokens,
-        modelUsed: 'gemini-1.5-flash',
+        modelUsed: 'gemma-4-31b-it',
         rawResponse: [aiResult.usage?.rawResponse || '']
       }
     };
