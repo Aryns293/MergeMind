@@ -62,6 +62,21 @@ export function ReviewProgressToast() {
     };
   }, [socket]);
 
+  // Fallback timeout: If stuck for 45s, show an error.
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    if (status === "pending" || status === "progress") {
+      timeoutId = setTimeout(() => {
+        setStatus("error");
+        setMessages((prev) => [
+          ...prev, 
+          "Error: The background review process timed out. The server might be asleep or the AI API is rate-limited."
+        ]);
+      }, 45000);
+    }
+    return () => clearTimeout(timeoutId);
+  }, [status]);
+
   const handleDismiss = () => {
     setActiveReview(null);
     setMessages([]);
