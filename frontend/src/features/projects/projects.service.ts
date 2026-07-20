@@ -12,7 +12,12 @@ export const projectsService = {
     return data.data.project;
   },
 
-  createProject: async (payload: { projectName?: string, repoOwner: string, repoName: string }): Promise<Project> => {
+  createProject: async (payload: {
+    projectName: string;
+    repoOwner?: string;
+    repoName?: string;
+    personalAccessToken?: string;
+  }): Promise<Project> => {
     const { data } = await api.post('/projects', payload);
     return data.data.project;
   },

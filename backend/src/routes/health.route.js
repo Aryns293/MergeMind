@@ -109,7 +109,7 @@ router.get('/', async (req, res) => {
 
     const isSystemHealthy = isDbConnected;
 
-    res.status(200).json({
+    res.status(isSystemHealthy ? 200 : 503).json({
       status: isSystemHealthy ? 'success' : 'fail',
       message: isSystemHealthy ? 'System is healthy' : 'System is degraded',
       timestamp: new Date().toISOString(),

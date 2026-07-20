@@ -2,8 +2,25 @@ import { z } from 'zod';
 
 export const createProjectSchema = z.object({
   body: z.object({
-    repoOwner: z.string({ required_error: 'Repository owner is required' }).min(1),
-    repoName: z.string({ required_error: 'Repository name is required' }).min(1),
-    projectName: z.string().optional(),
+    projectName: z.string({ required_error: 'Project name is required' }).min(1, 'Project name is required'),
+    repoOwner: z.string().optional(),
+    repoName: z.string().optional(),
+    personalAccessToken: z.string().optional(),
+  }).superRefine((data, ctx) => {
+    const hasRepoFields = Boolean(data.repoOwner || data.repoName);
+    if (hasRepoFields && (!data.repoOwner || !data.repoName)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Both repository owner and name are required when connecting a repository',
+        path: ['repoOwner'],
+      });
+    }
+    if (hasRepoFields && !data.personalAccessToken) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'GitHub Personal Access Token is required when connecting a repository',
+        path: ['personalAccessToken'],
+      });
+    }
   }),
 });

@@ -5,7 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { projectsService } from "@/features/projects/projects.service";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { Folder, Loader2, Plus, GitBranch, Activity, ArrowRight, Code2 } from "lucide-react";
+import { Folder, Loader2, Plus, GitBranch, Activity, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatDistanceToNow } from "date-fns";
@@ -19,8 +19,6 @@ import { BorderBeam } from "@/components/magicui/border-beam";
 export default function ProjectsPage() {
   const [open, setOpen] = useState(false);
   const [newProjectName, setNewProjectName] = useState("");
-  const [repoOwner, setRepoOwner] = useState("");
-  const [repoName, setRepoName] = useState("");
   const queryClient = useQueryClient();
 
   const { data: projects, isLoading, error } = useQuery({
@@ -29,14 +27,12 @@ export default function ProjectsPage() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (payload: { projectName: string, repoOwner: string, repoName: string }) => projectsService.createProject(payload),
+    mutationFn: (payload: { projectName: string }) => projectsService.createProject(payload),
     onSuccess: () => {
       toast.success("Project created successfully!");
       queryClient.invalidateQueries({ queryKey: ["projects"] });
       setOpen(false);
       setNewProjectName("");
-      setRepoOwner("");
-      setRepoName("");
     },
     onError: (err: any) => {
       toast.error(err?.response?.data?.message || "Failed to create project");
@@ -44,15 +40,11 @@ export default function ProjectsPage() {
   });
 
   const handleCreate = () => {
-    if (!newProjectName.trim() || !repoOwner.trim() || !repoName.trim()) {
-      toast.error("Please fill in all fields");
+    if (!newProjectName.trim()) {
+      toast.error("Please enter a project name");
       return;
     }
-    createMutation.mutate({
-      projectName: newProjectName,
-      repoOwner,
-      repoName
-    });
+    createMutation.mutate({ projectName: newProjectName.trim() });
   };
 
   if (isLoading) {
@@ -92,7 +84,7 @@ export default function ProjectsPage() {
   }
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
@@ -115,7 +107,7 @@ export default function ProjectsPage() {
             <DialogHeader>
               <DialogTitle>Create New Project</DialogTitle>
               <DialogDescription>
-                To create a project, you must connect an initial GitHub repository.
+                Create a project first, then connect a GitHub repository from the Repositories page.
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
@@ -126,32 +118,14 @@ export default function ProjectsPage() {
                   placeholder="e.g. Acme Web App"
                   value={newProjectName}
                   onChange={(e) => setNewProjectName(e.target.value)}
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="owner">Repository Owner</Label>
-                <Input
-                  id="owner"
-                  placeholder="e.g. facebook"
-                  value={repoOwner}
-                  onChange={(e) => setRepoOwner(e.target.value)}
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="repo">Repository Name</Label>
-                <Input
-                  id="repo"
-                  placeholder="e.g. react"
-                  value={repoName}
-                  onChange={(e) => setRepoName(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleCreate()}
                 />
               </div>
             </div>
             <DialogFooter>
-              <Button 
-                onClick={handleCreate} 
-                disabled={createMutation.isPending || !newProjectName.trim() || !repoOwner.trim() || !repoName.trim()}
+              <Button
+                onClick={handleCreate}
+                disabled={createMutation.isPending || !newProjectName.trim()}
               >
                 {createMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Create
@@ -162,25 +136,24 @@ export default function ProjectsPage() {
       </div>
 
       {projects?.length === 0 ? (
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           className="relative flex flex-col items-center justify-center h-[50vh] border-2 border-dashed rounded-3xl gap-4 bg-muted/10 overflow-hidden"
         >
-          {/* Subtle background glow */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
-          
-          <motion.div 
+
+          <motion.div
             animate={{ y: [0, -8, 0] }}
             transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
             className="rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 p-5 border border-primary/10 shadow-lg shadow-primary/5"
           >
             <Folder className="h-10 w-10 text-primary" />
           </motion.div>
-          
+
           <h3 className="text-xl font-semibold tracking-tight mt-2">No projects found</h3>
           <p className="text-sm text-muted-foreground text-center max-w-sm">
-            Get started by creating a new project and connecting a GitHub repository to begin AI code reviews.
+            Create a project, then connect a GitHub repository to begin AI code reviews.
           </p>
           <Button onClick={() => setOpen(true)} className="mt-4 shadow-lg shadow-primary/20">
             <Plus className="mr-2 h-4 w-4" /> Create First Project
@@ -201,11 +174,10 @@ export default function ProjectsPage() {
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none z-0">
                   <BorderBeam size={300} duration={10} delay={index} />
                 </div>
-                
-                {/* Decorative glowing orbs on hover */}
+
                 <div className="absolute -right-20 -top-20 w-40 h-40 bg-primary/20 blur-[50px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none z-0" />
                 <div className="absolute -left-20 -bottom-20 w-40 h-40 bg-chart-2/20 blur-[50px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none z-0" />
-                
+
                 <CardHeader className="relative z-10 pb-4">
                   <CardTitle className="flex items-center gap-2 text-xl font-bold group-hover:text-primary transition-colors duration-300">
                     <div className="rounded-xl bg-primary/10 p-2.5 text-primary shadow-inner group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">

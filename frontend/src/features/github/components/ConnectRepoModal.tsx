@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -11,25 +11,44 @@ import { githubService } from "../github.service";
 import { projectsService } from "@/features/projects/projects.service";
 import { RemoteRepo } from "../types";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
 
 export function ConnectRepoModal() {
   const [open, setOpen] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState<string>("");
   const [selectedRepo, setSelectedRepo] = useState<string>("");
+  const [newProjectName, setNewProjectName] = useState("");
+  const [token, setToken] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
-  const token = typeof window !== "undefined" ? localStorage.getItem("github_pat") : null;
+  useEffect(() => {
+    setToken(localStorage.getItem("github_pat"));
+  }, [open]);
 
   const { data: projects, isLoading: loadingProjects } = useQuery({
     queryKey: ["projects"],
     queryFn: projectsService.getProjects,
+    enabled: open,
   });
 
   const { data: remoteRepos, isLoading: loadingRepos, error: reposError } = useQuery({
     queryKey: ["remoteRepos", token],
     queryFn: () => githubService.listRemoteRepos(token!),
-    enabled: !!token && open, // Only fetch when modal is open and token exists
+    enabled: !!token && open,
+  });
+
+  const createProjectMutation = useMutation({
+    mutationFn: (name: string) => projectsService.createProject({ projectName: name }),
+    onSuccess: (project) => {
+      toast.success("Project created!");
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      setSelectedProjectId(project.id);
+      setNewProjectName("");
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Failed to create project");
+    },
   });
 
   const connectMutation = useMutation({
@@ -47,25 +66,37 @@ export function ConnectRepoModal() {
       queryClient.invalidateQueries({ queryKey: ["projects"] });
       setOpen(false);
       setSelectedRepo("");
+      setSelectedProjectId("");
     },
     onError: (error: any) => {
       toast.error(error?.response?.data?.message || "Failed to connect repository");
     },
   });
 
+  const selectedRepoDetails = remoteRepos?.find((r) => r.id.toString() === selectedRepo);
+  const selectedProject = projects?.find((p) => p.id === selectedProjectId);
+  const canConnect = Boolean(selectedProjectId && selectedRepo && token && !connectMutation.isPending);
+
   const handleConnect = () => {
     if (!selectedProjectId) {
-      toast.error("Please select a project");
+      toast.error("Please select or create a project");
       return;
     }
     if (!selectedRepo) {
       toast.error("Please select a repository");
       return;
     }
-    const repoDetails = remoteRepos?.find(r => r.id.toString() === selectedRepo);
-    if (repoDetails) {
-      connectMutation.mutate(repoDetails);
+    if (selectedRepoDetails) {
+      connectMutation.mutate(selectedRepoDetails);
     }
+  };
+
+  const handleCreateProject = () => {
+    if (!newProjectName.trim()) {
+      toast.error("Please enter a project name");
+      return;
+    }
+    createProjectMutation.mutate(newProjectName.trim());
   };
 
   return (
@@ -90,7 +121,7 @@ export function ConnectRepoModal() {
 
         <AnimatePresence mode="wait">
           {!token ? (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
@@ -108,7 +139,7 @@ export function ConnectRepoModal() {
               </Button>
             </motion.div>
           ) : (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
@@ -116,24 +147,46 @@ export function ConnectRepoModal() {
             >
               <div className="grid gap-2">
                 <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Target Project</Label>
-                <Select value={selectedProjectId} onValueChange={(val) => { if (val) setSelectedProjectId(val); }}>
-                  <SelectTrigger className="bg-background/50 border-white/10 focus:ring-primary/50 rounded-xl h-11">
-                    <SelectValue placeholder="Select a project" />
-                  </SelectTrigger>
-                  <SelectContent className="glass border-white/10 rounded-xl">
-                    {loadingProjects ? (
-                      <div className="flex items-center justify-center p-4 text-sm text-muted-foreground">Loading projects...</div>
-                    ) : projects?.length === 0 ? (
-                      <div className="flex items-center justify-center p-4 text-sm text-muted-foreground">No projects found. Create one first!</div>
-                    ) : (
-                      projects?.map((project) => (
-                        <SelectItem key={project.id} value={project.id} className="rounded-lg cursor-pointer">
-                          {project.name}
-                        </SelectItem>
-                      ))
-                    )}
-                  </SelectContent>
-                </Select>
+                {projects?.length === 0 && !loadingProjects ? (
+                  <div className="grid gap-2 p-3 rounded-xl border border-white/10 bg-muted/10">
+                    <p className="text-sm text-muted-foreground">No projects yet. Create one to connect a repo:</p>
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="Project name"
+                        value={newProjectName}
+                        onChange={(e) => setNewProjectName(e.target.value)}
+                        onKeyDown={(e) => e.key === "Enter" && handleCreateProject()}
+                        className="bg-background/50 border-white/10 rounded-xl h-10"
+                      />
+                      <Button
+                        onClick={handleCreateProject}
+                        disabled={createProjectMutation.isPending || !newProjectName.trim()}
+                        className="rounded-xl h-10"
+                      >
+                        {createProjectMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Create"}
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <Select value={selectedProjectId} onValueChange={setSelectedProjectId}>
+                    <SelectTrigger className="bg-background/50 border-white/10 focus:ring-primary/50 rounded-xl h-11">
+                      <SelectValue placeholder="Select a project">
+                        {selectedProject?.name}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent className="glass border-white/10 rounded-xl">
+                      {loadingProjects ? (
+                        <div className="flex items-center justify-center p-4 text-sm text-muted-foreground">Loading projects...</div>
+                      ) : (
+                        projects?.map((project) => (
+                          <SelectItem key={project.id} value={project.id} className="rounded-lg cursor-pointer">
+                            {project.name}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                )}
               </div>
 
               <div className="grid gap-2">
@@ -143,9 +196,11 @@ export function ConnectRepoModal() {
                     Failed to fetch repositories. Please check your PAT validity and scopes.
                   </div>
                 ) : (
-                  <Select value={selectedRepo} onValueChange={(val) => { if (val) setSelectedRepo(val); }}>
+                  <Select value={selectedRepo} onValueChange={setSelectedRepo}>
                     <SelectTrigger className="bg-background/50 border-white/10 focus:ring-primary/50 rounded-xl h-11">
-                      <SelectValue placeholder="Select a repository" />
+                      <SelectValue placeholder="Select a repository">
+                        {selectedRepoDetails?.fullName}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent className="glass border-white/10 rounded-xl max-h-[300px]">
                       {loadingRepos ? (
@@ -156,7 +211,12 @@ export function ConnectRepoModal() {
                         <div className="flex items-center justify-center p-4 text-sm text-muted-foreground">No repositories found.</div>
                       ) : (
                         remoteRepos?.map((repo) => (
-                          <SelectItem key={repo.id} value={repo.id.toString()} className="rounded-lg cursor-pointer my-0.5">
+                          <SelectItem
+                            key={repo.id}
+                            value={repo.id.toString()}
+                            textValue={repo.fullName}
+                            className="rounded-lg cursor-pointer my-0.5"
+                          >
                             <div className="flex items-center gap-2">
                               <GitBranch className="h-4 w-4 text-muted-foreground" />
                               <span className="font-medium">{repo.fullName}</span>
@@ -172,7 +232,7 @@ export function ConnectRepoModal() {
               <Button
                 className="w-full mt-2 h-11 rounded-xl shadow-lg shadow-primary/20 hover-glow"
                 onClick={handleConnect}
-                disabled={connectMutation.isPending || !selectedProjectId || !selectedRepo}
+                disabled={!canConnect}
               >
                 {connectMutation.isPending ? (
                   <>
