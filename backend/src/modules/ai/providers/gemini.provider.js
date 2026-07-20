@@ -6,9 +6,9 @@ import logger from '../../../utils/logger.js';
 class GeminiProvider {
   constructor() {
     this.genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
-    // Use gemma-4-31b-it since user's free tier quota for gemini models is 0
-    this.model = this.genAI.getGenerativeModel({ model: 'gemma-4-31b-it' });
-    this.fallbackModel = this.genAI.getGenerativeModel({ model: 'gemma-4-26b-a4b-it' });
+    // Use gemini-flash-lite-latest since user's API key has quota for it and gemma is throwing 503
+    this.model = this.genAI.getGenerativeModel({ model: 'gemini-flash-lite-latest' });
+    this.fallbackModel = this.genAI.getGenerativeModel({ model: 'gemini-flash-lite-latest' });
   }
 
   /**
@@ -21,7 +21,7 @@ class GeminiProvider {
     
     for (let modelIdx = 0; modelIdx < models.length; modelIdx++) {
       const model = models[modelIdx];
-      const modelName = modelIdx === 0 ? 'gemma-4-31b-it' : 'gemma-4-26b-a4b-it';
+      const modelName = 'gemini-flash-lite-latest';
       
       for (let attempt = 0; attempt < 3; attempt++) {
         try {
