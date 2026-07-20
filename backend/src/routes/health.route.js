@@ -107,7 +107,7 @@ router.get('/', async (req, res) => {
       isQueueConnected = false;
     }
 
-    const isSystemHealthy = isDbConnected;
+    const isSystemHealthy = isDbConnected && isQueueConnected;
 
     res.status(isSystemHealthy ? 200 : 503).json({
       status: isSystemHealthy ? 'success' : 'fail',

@@ -12,14 +12,9 @@ export const getProjects = async (req, res) => {
 
 export const createProject = async (req, res) => {
   const userId = req.user.id;
-  const { repoOwner, repoName, projectName, personalAccessToken } = req.body;
+  const { repoOwner, repoName, projectName } = req.body;
 
-  const project = await projectsService.createProject(userId, {
-    projectName,
-    repoOwner,
-    repoName,
-    personalAccessToken,
-  });
+  const project = await projectsService.connectRepository(userId, repoOwner, repoName, projectName);
 
   res.status(201).json({
     status: 'success',

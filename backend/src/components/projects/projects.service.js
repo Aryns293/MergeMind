@@ -1,24 +1,19 @@
 import * as projectRepository from '../../repositories/project.repository.js';
 import AppError from '../../utils/appError.js';
 import githubClient from '../../modules/github/github.client.js';
+import { env } from '../../config/env.js';
 
 export const listUserProjects = async (userId) => {
   return await projectRepository.getProjectsByUser(userId);
 };
 
-export const createEmptyProject = async (userId, projectName) => {
-  if (!projectName?.trim()) {
-    throw new AppError('Project name is required', 400);
-  }
-  return await projectRepository.createProject(userId, projectName.trim());
-};
+export const connectRepository = async (userId, repoOwner, repoName, customProjectName) => {
+  // Use the system PAT for now since full OAuth isn't linked for the user
+  const token = process.env.GITHUB_ACCESS_TOKEN;
 
-export const connectRepository = async (userId, repoOwner, repoName, customProjectName, personalAccessToken) => {
-  if (!personalAccessToken) {
-    throw new AppError('GitHub Personal Access Token is required', 400);
-  }
 
-  const repoData = await githubClient.getRepository(personalAccessToken, repoOwner, repoName);
+  // 1. Verify the repo exists on GitHub
+  const repoData = await githubClient.getRepository(token, repoOwner, repoName);
 
   if (!repoData) {
     throw new AppError('Repository not found or inaccessible.', 404);
@@ -26,6 +21,8 @@ export const connectRepository = async (userId, repoOwner, repoName, customProje
 
   const projectName = customProjectName || repoData.name;
 
+  // 2. Create the project and repo connection in our database
+  // Note: we use repoData.id.toString() because github IDs are integers but we store as string
   const project = await projectRepository.createProjectWithConnection(
     userId,
     projectName,
@@ -35,14 +32,6 @@ export const connectRepository = async (userId, repoOwner, repoName, customProje
   );
 
   return project;
-};
-
-export const createProject = async (userId, { projectName, repoOwner, repoName, personalAccessToken }) => {
-  if (repoOwner && repoName) {
-    return connectRepository(userId, repoOwner, repoName, projectName, personalAccessToken);
-  }
-
-  return createEmptyProject(userId, projectName);
 };
 
 export const getProjectDetails = async (userId, projectId) => {
