@@ -175,4 +175,13 @@ npx cypress open
 
 ---
 
+## 👨‍💻 Author
+
+**Aryan Sharma**  
+🎓 **Delhi Technological University**  
+💻 Department of Software Engineering  
+🔗 [LinkedIn Profile](https://www.linkedin.com/in/aryan-sharma-29m/)
+
+---
+
 *Built for the modern developer workflow.*
