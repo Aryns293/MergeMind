@@ -7,7 +7,7 @@ services:
     name: mergemind-backend
     env: docker
     dockerfilePath: ./Dockerfile
-    dockerContext: ./backend
+    dockerContext: .
     rootDir: backend
     plan: starter # Starter plan minimum for pg-boss and general API workloads
     healthCheckPath: /api/v1/health
