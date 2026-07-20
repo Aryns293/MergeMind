@@ -168,11 +168,9 @@ export function ConnectRepoModal() {
                     </div>
                   </div>
                 ) : (
-                  <Select value={selectedProjectId} onValueChange={setSelectedProjectId}>
+                  <Select value={selectedProjectId || undefined} onValueChange={setSelectedProjectId}>
                     <SelectTrigger className="bg-background/50 border-white/10 focus:ring-primary/50 rounded-xl h-11">
-                      <SelectValue placeholder="Select a project">
-                        {selectedProject?.name}
-                      </SelectValue>
+                      <SelectValue placeholder="Select a project" />
                     </SelectTrigger>
                     <SelectContent className="glass border-white/10 rounded-xl">
                       {loadingProjects ? (
@@ -196,11 +194,9 @@ export function ConnectRepoModal() {
                     Failed to fetch repositories. Please check your PAT validity and scopes.
                   </div>
                 ) : (
-                  <Select value={selectedRepo} onValueChange={setSelectedRepo}>
+                  <Select value={selectedRepo || undefined} onValueChange={setSelectedRepo}>
                     <SelectTrigger className="bg-background/50 border-white/10 focus:ring-primary/50 rounded-xl h-11">
-                      <SelectValue placeholder="Select a repository">
-                        {selectedRepoDetails?.fullName}
-                      </SelectValue>
+                      <SelectValue placeholder="Select a repository" />
                     </SelectTrigger>
                     <SelectContent className="glass border-white/10 rounded-xl max-h-[300px]">
                       {loadingRepos ? (
