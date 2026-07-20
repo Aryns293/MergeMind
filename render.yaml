@@ -9,7 +9,7 @@ services:
     dockerfilePath: ./Dockerfile
     dockerContext: .
     rootDir: backend
-    plan: starter # Starter plan minimum for pg-boss and general API workloads
+    plan: free # Starter plan minimum for pg-boss and general API workloads
     healthCheckPath: /api/v1/health
     
     # Enable automatic deployments on git pushes (we can toggle this if using GitHub Actions)
