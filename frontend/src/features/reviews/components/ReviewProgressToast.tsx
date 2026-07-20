@@ -70,9 +70,9 @@ export function ReviewProgressToast() {
         setStatus("error");
         setMessages((prev) => [
           ...prev, 
-          "Error: The background review process timed out. The server might be asleep or the AI API is rate-limited."
+          "Error: The background review process timed out (120s). The server might be asleep or the AI API is rate-limited."
         ]);
-      }, 45000);
+      }, 120000); // 120 seconds
     }
     return () => clearTimeout(timeoutId);
   }, [status]);
