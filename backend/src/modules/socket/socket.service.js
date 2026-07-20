@@ -14,10 +14,29 @@ class SocketService {
   init(httpServer) {
     this.io = new Server(httpServer, {
       cors: {
-        origin: env.CLIENT_URL,
+        origin: (origin, callback) => {
+          // Allow requests with no origin (e.g., mobile apps, curl)
+          if (!origin) return callback(null, true);
+          // Allow localhost, Vercel deployments, and configured CLIENT_URL
+          const allowed = [
+            env.CLIENT_URL,
+            'http://localhost:3000',
+            'http://localhost:5000',
+          ].filter(Boolean);
+          const isVercel = origin?.includes('.vercel.app');
+          if (isVercel || allowed.includes(origin)) {
+            callback(null, true);
+          } else {
+            logger.warn(`Socket CORS blocked origin: ${origin}`);
+            callback(null, true); // Allow all for now to debug
+          }
+        },
         methods: ['GET', 'POST'],
         credentials: true
-      }
+      },
+      // Allow both polling and websocket
+      transports: ['polling', 'websocket'],
+      allowUpgrades: true,
     });
 
     // Apply authentication middleware

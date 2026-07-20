@@ -33,13 +33,16 @@ export function SocketProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") || "http://localhost:5000";
+    const backendUrl = process.env.NEXT_PUBLIC_SOCKET_URL 
+      || process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") 
+      || "http://localhost:5000";
 
     const socketInstance = io(backendUrl, {
       auth: { token },
-      transports: ["websocket"],
-      reconnectionAttempts: 5,
-      reconnectionDelay: 1000,
+      transports: ["polling", "websocket"], // polling first for proxy/Render compatibility
+      reconnectionAttempts: 10,
+      reconnectionDelay: 2000,
+      timeout: 20000,
     });
 
     socketInstance.on("connect", () => {
