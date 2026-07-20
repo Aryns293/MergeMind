@@ -1,0 +1,79 @@
+import { Server } from 'socket.io';
+import { env } from '../../config/env.js';
+import logger from '../../utils/logger.js';
+import { socketAuth } from '../../middlewares/socketAuth.middleware.js';
+
+class SocketService {
+  constructor() {
+    this.io = null;
+  }
+
+  /**
+   * Initializes the Socket.IO server
+   */
+  init(httpServer) {
+    this.io = new Server(httpServer, {
+      cors: {
+        origin: env.CLIENT_URL,
+        methods: ['GET', 'POST'],
+        credentials: true
+      }
+    });
+
+    // Apply authentication middleware
+    this.io.use(socketAuth);
+
+    this.io.on('connection', (socket) => {
+      logger.info(`Socket connected: ${socket.id} for User: ${socket.user.id}`);
+
+      // The user automatically joins a room specific to their userId.
+      // This allows us to emit real-time events exclusively to their active tabs.
+      const userRoom = `user_${socket.user.id}`;
+      socket.join(userRoom);
+
+      socket.on('disconnect', () => {
+        logger.info(`Socket disconnected: ${socket.id} for User: ${socket.user.id}`);
+      });
+    });
+
+    return this.io;
+  }
+
+  /**
+   * Get the initialized Socket.IO instance
+   */
+  getIO() {
+    if (!this.io) {
+      throw new Error('Socket.IO is not initialized!');
+    }
+    return this.io;
+  }
+
+  /**
+   * Emits an event to all connected sockets of a specific user
+   */
+  emitToUser(userId, event, data) {
+    if (this.io) {
+      logger.info(`Emitting event '${event}' to user_${userId}`);
+      this.io.to(`user_${userId}`).emit(event, data);
+    } else {
+      logger.warn(`Socket.IO not initialized when trying to emit '${event}'`);
+    }
+  }
+
+  /**
+   * Closes the Socket.IO server during graceful shutdown
+   */
+  async close() {
+    if (this.io) {
+      return new Promise((resolve) => {
+        this.io.close(() => {
+          logger.info('Socket.IO server closed');
+          resolve();
+        });
+      });
+    }
+  }
+}
+
+export default new SocketService();

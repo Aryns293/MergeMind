@@ -1,0 +1,39 @@
+# render.yaml
+# Render Blueprint for MergeMind Backend (AI Code Reviewer)
+# Documentation: https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: mergemind-backend
+    env: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: ./backend
+    rootDir: backend
+    plan: starter # Starter plan minimum for pg-boss and general API workloads
+    healthCheckPath: /api/v1/health
+    
+    # Enable automatic deployments on git pushes (we can toggle this if using GitHub Actions)
+    autoDeploy: false
+    
+    # Define required environment variables (secrets must be provided securely in Render dashboard)
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: DATABASE_URL
+        sync: false # Must be populated from Neon Postgres in dashboard
+      - key: DIRECT_DATABASE_URL
+        sync: false # Must be populated from Neon Postgres in dashboard
+      - key: JWT_SECRET
+        generateValue: true # Generates a random secure string automatically
+      - key: CLIENT_URL
+        value: https://your-mergemind-frontend-url.vercel.app # Update this after frontend deploy
+      - key: CORS_ORIGIN
+        value: https://your-mergemind-frontend-url.vercel.app # Update this after frontend deploy
+      - key: GEMINI_API_KEY
+        sync: false # Must provide securely in dashboard
+      - key: GITHUB_ACCESS_TOKEN
+        sync: false # Must provide securely in dashboard
+      - key: LOG_LEVEL
+        value: info

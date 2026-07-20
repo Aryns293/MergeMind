@@ -1,0 +1,15 @@
+node_modules
+npm-debug.log
+.dockerignore
+.git
+.gitignore
+.env
+tests/
+coverage/
+README.md
+vitest.config.js
+.prettierrc
+.eslintrc.json
+logs/
+*.log
+
