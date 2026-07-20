@@ -168,7 +168,7 @@ export function ConnectRepoModal() {
                     </div>
                   </div>
                 ) : (
-                  <Select value={selectedProjectId || undefined} onValueChange={setSelectedProjectId}>
+                  <Select value={selectedProjectId || undefined} onValueChange={(val) => setSelectedProjectId(val || "")}>
                     <SelectTrigger className="bg-background/50 border-white/10 focus:ring-primary/50 rounded-xl h-11">
                       <SelectValue placeholder="Select a project" />
                     </SelectTrigger>
@@ -194,7 +194,7 @@ export function ConnectRepoModal() {
                     Failed to fetch repositories. Please check your PAT validity and scopes.
                   </div>
                 ) : (
-                  <Select value={selectedRepo || undefined} onValueChange={setSelectedRepo}>
+                  <Select value={selectedRepo || undefined} onValueChange={(val) => setSelectedRepo(val || "")}>
                     <SelectTrigger className="bg-background/50 border-white/10 focus:ring-primary/50 rounded-xl h-11">
                       <SelectValue placeholder="Select a repository" />
                     </SelectTrigger>
@@ -210,7 +210,6 @@ export function ConnectRepoModal() {
                           <SelectItem
                             key={repo.id}
                             value={repo.id.toString()}
-                            textValue={repo.fullName}
                             className="rounded-lg cursor-pointer my-0.5"
                           >
                             <div className="flex items-center gap-2">
