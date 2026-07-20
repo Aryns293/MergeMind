@@ -39,7 +39,11 @@ export default function ProjectsPage() {
       setRepoName("");
     },
     onError: (err: any) => {
-      toast.error(err?.response?.data?.message || "Failed to create project");
+      const msg = err?.response?.data?.message 
+        || err?.response?.data?.error 
+        || err?.response?.data?.details?.[0]?.message
+        || "Failed to create project";
+      toast.error(msg);
     },
   });
 
