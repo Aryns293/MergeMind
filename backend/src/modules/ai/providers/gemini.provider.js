@@ -6,9 +6,9 @@ import logger from '../../../utils/logger.js';
 class GeminiProvider {
   constructor() {
     this.genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
-    // Try gemini-2.5-flash first, fallback to gemini-1.5-flash (different quota pool)
-    this.model = this.genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-    this.fallbackModel = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    // Use gemini-1.5-flash since 2.5-flash is not available on this API key
+    this.model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    this.fallbackModel = this.genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
   }
 
   /**
@@ -21,7 +21,7 @@ class GeminiProvider {
     
     for (let modelIdx = 0; modelIdx < models.length; modelIdx++) {
       const model = models[modelIdx];
-      const modelName = modelIdx === 0 ? 'gemini-2.5-flash' : 'gemini-1.5-flash';
+      const modelName = modelIdx === 0 ? 'gemini-1.5-flash' : 'gemini-1.5-pro';
       
       for (let attempt = 0; attempt < 3; attempt++) {
         try {
@@ -47,6 +47,8 @@ class GeminiProvider {
         } catch (error) {
           const is429 = error.message?.includes('429') || error.message?.includes('quota') || error.message?.includes('RESOURCE_EXHAUSTED');
           
+          const is404 = error.message?.includes('404') || error.message?.includes('not found') || error.message?.includes('no longer available');
+
           if (is429 && attempt < 2) {
             // Exponential backoff: 10s, 30s
             const waitMs = (attempt + 1) * 10000;
@@ -55,8 +57,8 @@ class GeminiProvider {
             continue;
           }
           
-          if (is429) {
-            logger.warn(`${modelName} exhausted after retries, trying fallback...`);
+          if (is429 || is404) {
+            logger.warn(`${modelName} failed (${is429 ? 'Rate Limit' : 'Not Found'}), trying fallback...`);
             break; // try next model
           }
           
