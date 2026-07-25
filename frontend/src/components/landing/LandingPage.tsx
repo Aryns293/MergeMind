@@ -108,9 +108,9 @@ function HeroSection() {
       <div className="relative z-10 max-w-5xl mx-auto text-center">
         {/* Badge */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
           className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/20 bg-primary/5 text-primary text-sm font-medium mb-8"
         >
           <Sparkles className="h-3.5 w-3.5" />
@@ -120,9 +120,9 @@ function HeroSection() {
 
         {/* Headline */}
         <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
+          initial={{ opacity: 0, y: 40, filter: "blur(10px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          transition={{ duration: 0.8, delay: 0.15, ease: "easeOut" }}
           className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tighter leading-[1.05] mb-6"
         >
           Ship better code,{" "}
@@ -131,9 +131,9 @@ function HeroSection() {
 
         {/* Subheadline */}
         <motion.p
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          initial={{ opacity: 0, y: 40, filter: "blur(10px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
           className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed"
         >
           MergeMind connects to your GitHub repositories and uses AI to perform deep,
@@ -143,9 +143,9 @@ function HeroSection() {
 
         {/* CTA */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
+          initial={{ opacity: 0, y: 40, filter: "blur(10px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          transition={{ duration: 0.8, delay: 0.45, ease: "easeOut" }}
           className="flex flex-col sm:flex-row items-center justify-center gap-4"
         >
           {user ? (
@@ -169,10 +169,10 @@ function HeroSection() {
 
         {/* Hero visual — terminal mockup */}
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.5 }}
-          className="mt-16 relative"
+          initial={{ opacity: 0, y: 60, scale: 0.95, filter: "blur(20px)" }}
+          animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+          transition={{ duration: 1, delay: 0.6, type: "spring", stiffness: 50 }}
+          className="mt-16 relative hover:-translate-y-2 transition-transform duration-500"
         >
           <div className="relative rounded-2xl border border-border/50 overflow-hidden glass shadow-2xl shadow-primary/10 max-w-3xl mx-auto">
             {/* Terminal header */}
@@ -268,9 +268,10 @@ function FeaturesSection() {
     <section id="features" className="relative py-24 px-6">
       <div className="max-w-6xl mx-auto">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          initial={{ opacity: 0, y: 40, filter: "blur(10px)" }}
+          whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
           className="text-center mb-16"
         >
           <span className="text-sm font-medium text-primary uppercase tracking-wider">Features</span>
@@ -287,11 +288,11 @@ function FeaturesSection() {
           {features.map((feature, i) => (
             <motion.div
               key={feature.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="group relative p-6 rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm card-hover"
+              initial={{ opacity: 0, y: 40, filter: "blur(10px)" }}
+              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.7, delay: i * 0.15, ease: "easeOut" }}
+              className="group relative p-6 rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm hover:-translate-y-2 hover:shadow-xl hover:border-primary/30 transition-all duration-300"
             >
               <div className={`inline-flex p-3 rounded-xl ${feature.bg} mb-4`}>
                 <feature.icon className={`h-6 w-6 ${feature.color}`} />
@@ -320,9 +321,10 @@ function HowItWorksSection() {
 
       <div className="max-w-6xl mx-auto relative z-10">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          initial={{ opacity: 0, y: 40, filter: "blur(10px)" }}
+          whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
           className="text-center mb-16"
         >
           <span className="text-sm font-medium text-chart-2 uppercase tracking-wider">How It Works</span>
@@ -336,15 +338,22 @@ function HowItWorksSection() {
           {steps.map((step, i) => (
             <motion.div
               key={step.number}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.15 }}
+              initial={{ opacity: 0, y: 40, filter: "blur(10px)" }}
+              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.7, delay: i * 0.2, ease: "easeOut" }}
               className="relative text-center group"
             >
               {/* Connector line */}
               {i < steps.length - 1 && (
-                <div className="hidden lg:block absolute top-12 left-[60%] w-[80%] h-px bg-gradient-to-r from-border to-transparent" />
+                <motion.div 
+                  initial={{ opacity: 0, scaleX: 0 }}
+                  whileInView={{ opacity: 1, scaleX: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, delay: 0.5 + (i * 0.2), ease: "easeInOut" }}
+                  style={{ transformOrigin: "left center" }}
+                  className="hidden lg:block absolute top-12 left-[60%] w-[80%] h-[2px] bg-gradient-to-r from-primary/30 to-transparent" 
+                />
               )}
 
               <div className="relative inline-flex mb-6">
@@ -371,9 +380,10 @@ function PreviewSection() {
     <section id="preview" className="relative py-24 px-6 overflow-hidden">
       <div className="max-w-6xl mx-auto">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          initial={{ opacity: 0, y: 40, filter: "blur(10px)" }}
+          whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
           className="text-center mb-16"
         >
           <span className="text-sm font-medium text-primary uppercase tracking-wider">Preview</span>
@@ -386,10 +396,11 @@ function PreviewSection() {
         <div className="grid md:grid-cols-2 gap-8">
           {/* Dashboard preview card */}
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="rounded-2xl border border-border/50 overflow-hidden glass"
+            initial={{ opacity: 0, x: -50, filter: "blur(10px)" }}
+            whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.8, type: "spring", stiffness: 70 }}
+            className="rounded-2xl border border-border/50 overflow-hidden glass hover:shadow-2xl hover:shadow-primary/10 transition-shadow duration-500"
           >
             <div className="p-6 border-b border-border/50">
               <div className="flex items-center gap-3 mb-4">
@@ -421,10 +432,11 @@ function PreviewSection() {
 
           {/* AI Review preview card */}
           <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="rounded-2xl border border-border/50 overflow-hidden glass"
+            initial={{ opacity: 0, x: 50, filter: "blur(10px)" }}
+            whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.8, type: "spring", stiffness: 70, delay: 0.2 }}
+            className="rounded-2xl border border-border/50 overflow-hidden glass hover:shadow-2xl hover:shadow-primary/10 transition-shadow duration-500"
           >
             <div className="p-6 border-b border-border/50">
               <div className="flex items-center gap-3 mb-4">
@@ -569,9 +581,10 @@ function CTASection() {
       <div className="absolute inset-0 gradient-mesh opacity-30" />
 
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
+        initial={{ opacity: 0, y: 50, scale: 0.95, filter: "blur(10px)" }}
+        whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.8, type: "spring", stiffness: 80 }}
         className="max-w-3xl mx-auto text-center relative z-10"
       >
         <div className="inline-flex p-4 rounded-2xl bg-primary/10 mb-6">
