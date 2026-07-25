@@ -72,7 +72,6 @@ function Navbar() {
         <nav className="hidden md:flex items-center gap-8 text-sm text-muted-foreground">
           <a href="#features" className="hover:text-foreground transition-colors">Features</a>
           <a href="#how-it-works" className="hover:text-foreground transition-colors">How It Works</a>
-          <a href="#tech" className="hover:text-foreground transition-colors">Tech Stack</a>
           <a href="#preview" className="hover:text-foreground transition-colors">Preview</a>
         </nav>
 
@@ -367,55 +366,6 @@ function HowItWorksSection() {
   );
 }
 
-function TechStackSection() {
-  const techs = [
-    { name: "Next.js 16", description: "React framework", icon: "⚡" },
-    { name: "TypeScript", description: "Type safety", icon: "🔷" },
-    { name: "Gemini AI", description: "Code analysis", icon: "🧠" },
-    { name: "Socket.IO", description: "Real-time updates", icon: "🔌" },
-    { name: "shadcn/ui", description: "UI components", icon: "🎨" },
-    { name: "Recharts", description: "Data visualization", icon: "📊" },
-  ];
-
-  return (
-    <section id="tech" className="relative py-24 px-6">
-      <div className="max-w-4xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-12"
-        >
-          <span className="text-sm font-medium text-chart-3 uppercase tracking-wider">Tech Stack</span>
-          <h2 className="text-4xl sm:text-5xl font-black tracking-tighter mt-3">
-            Built with{" "}
-            <span className="gradient-text">modern tools</span>
-          </h2>
-        </motion.div>
-
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {techs.map((tech, i) => (
-            <motion.div
-              key={tech.name}
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.08 }}
-              className="flex items-center gap-4 p-4 rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm hover:border-primary/30 transition-colors"
-            >
-              <span className="text-2xl">{tech.icon}</span>
-              <div>
-                <p className="font-semibold text-sm">{tech.name}</p>
-                <p className="text-xs text-muted-foreground">{tech.description}</p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function PreviewSection() {
   return (
     <section id="preview" className="relative py-24 px-6 overflow-hidden">
@@ -512,52 +462,102 @@ function PreviewSection() {
 
 function ArchitectureSection() {
   return (
-    <section className="relative py-24 px-6">
-      <div className="max-w-4xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-12"
-        >
-          <span className="text-sm font-medium text-chart-4 uppercase tracking-wider">Architecture</span>
-          <h2 className="text-4xl sm:text-5xl font-black tracking-tighter mt-3">
-            How it all{" "}
-            <span className="gradient-text-primary">connects</span>
-          </h2>
-        </motion.div>
-
+    <section className="relative py-32 px-6 overflow-hidden">
+      {/* Background ambient glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-primary/10 blur-[150px] rounded-full pointer-events-none" />
+      
+      <div className="max-w-6xl mx-auto relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="rounded-2xl border border-border/50 p-8 glass"
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
+          className="text-center mb-24"
         >
-          <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-            {[
-              { icon: Code2, label: "GitHub", sub: "Repos & PRs" },
-              { icon: Terminal, label: "MergeMind API", sub: "Node.js + Express" },
-              { icon: Cpu, label: "Gemini AI", sub: "Code Analysis" },
-              { icon: BarChart3, label: "Dashboard", sub: "Next.js Frontend" },
-            ].map((node, i) => (
-              <div key={node.label} className="flex items-center gap-4">
-                <div className="flex flex-col items-center text-center">
-                  <div className="h-16 w-16 rounded-2xl bg-card border border-border flex items-center justify-center shadow-lg">
-                    <node.icon className="h-7 w-7 text-primary" />
-                  </div>
-                  <p className="font-bold text-sm mt-3">{node.label}</p>
-                  <p className="text-xs text-muted-foreground">{node.sub}</p>
-                </div>
-                {i < 3 && (
-                  <div className="hidden md:flex items-center">
-                    <div className="w-12 h-px bg-gradient-to-r from-primary/50 to-chart-2/50" />
-                    <ChevronRight className="h-4 w-4 text-muted-foreground -ml-1" />
-                  </div>
-                )}
-              </div>
-            ))}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-chart-4/10 text-chart-4 text-sm font-semibold uppercase tracking-wider mb-6 border border-chart-4/20 shadow-[0_0_15px_rgba(var(--chart-4),0.2)]">
+            <Cpu className="h-4 w-4" />
+            Architecture
           </div>
+          <h2 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter">
+            How it all{" "}
+            <span className="gradient-text-primary">connects</span>
+          </h2>
+          <p className="text-lg text-muted-foreground mt-6 max-w-2xl mx-auto">
+            A seamless, real-time pipeline from your repository to our AI engine, delivering instant insights straight to your dashboard.
+          </p>
         </motion.div>
+
+        <div className="relative">
+          <div className="relative glass border border-white/10 rounded-3xl p-8 md:p-16 shadow-2xl shadow-black/50 overflow-hidden group">
+            {/* Hover spotlight effect */}
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-chart-2/5 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none" />
+            
+            <div className="flex flex-col md:flex-row items-center justify-between gap-16 md:gap-4 relative z-10">
+              {[
+                { icon: Code2, label: "GitHub", sub: "Repos & PRs", color: "text-blue-400", bg: "bg-blue-400/10", border: "border-blue-400/30", shadow: "shadow-blue-500/20" },
+                { icon: Terminal, label: "MergeMind API", sub: "Node.js + Express", color: "text-emerald-400", bg: "bg-emerald-400/10", border: "border-emerald-400/30", shadow: "shadow-emerald-500/20" },
+                { icon: Cpu, label: "Gemini AI", sub: "Code Analysis", color: "text-purple-400", bg: "bg-purple-400/10", border: "border-purple-400/30", shadow: "shadow-purple-500/20" },
+                { icon: BarChart3, label: "Dashboard", sub: "Next.js Frontend", color: "text-orange-400", bg: "bg-orange-400/10", border: "border-orange-400/30", shadow: "shadow-orange-500/20" },
+              ].map((node, i) => (
+                <div key={node.label} className="relative flex flex-col items-center flex-1 w-full">
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8, y: 30 }}
+                    whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-50px" }}
+                    transition={{ duration: 0.6, delay: i * 0.2, type: "spring", stiffness: 90 }}
+                    whileHover={{ scale: 1.08, y: -8 }}
+                    className="flex flex-col items-center text-center w-full relative z-10 cursor-pointer"
+                  >
+                    <div className={`h-24 w-24 rounded-2xl ${node.bg} border ${node.border} flex items-center justify-center shadow-xl backdrop-blur-md transition-all duration-300 hover:shadow-2xl hover:${node.shadow}`}>
+                      <node.icon className={`h-10 w-10 ${node.color}`} />
+                    </div>
+                    <h3 className="font-extrabold text-lg mt-5 text-foreground">{node.label}</h3>
+                    <p className="text-sm text-muted-foreground mt-1.5 font-medium">{node.sub}</p>
+                  </motion.div>
+                  
+                  {/* Connector lines (Desktop) */}
+                  {i < 3 && (
+                    <motion.div 
+                      className="hidden md:flex absolute top-12 left-[60%] w-[80%] items-center -z-0"
+                      initial={{ opacity: 0, scaleX: 0 }}
+                      whileInView={{ opacity: 1, scaleX: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.8, delay: 0.6 + (i * 0.2), ease: "easeInOut" }}
+                      style={{ transformOrigin: "left center" }}
+                    >
+                      <div className="h-[2px] w-full bg-gradient-to-r from-border via-primary/50 to-border relative overflow-hidden rounded-full">
+                        <motion.div 
+                          className="absolute top-0 bottom-0 w-[40%] bg-gradient-to-r from-transparent via-primary to-transparent"
+                          animate={{ x: ["-100%", "300%"] }}
+                          transition={{ duration: 2, repeat: Infinity, ease: "linear", delay: i * 0.4 }}
+                        />
+                      </div>
+                      <ChevronRight className="h-5 w-5 text-primary absolute right-[-12px]" />
+                    </motion.div>
+                  )}
+                  
+                  {/* Connector lines (Mobile) */}
+                  {i < 3 && (
+                    <motion.div 
+                      className="md:hidden absolute top-[110px] left-1/2 h-12 w-[2px] -translate-x-1/2 bg-gradient-to-b from-border via-primary/50 to-border overflow-hidden rounded-full"
+                      initial={{ opacity: 0, scaleY: 0 }}
+                      whileInView={{ opacity: 1, scaleY: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.6, delay: 0.4 + (i * 0.2) }}
+                      style={{ transformOrigin: "top center" }}
+                    >
+                       <motion.div 
+                          className="absolute left-0 right-0 h-[40%] bg-gradient-to-b from-transparent via-primary to-transparent"
+                          animate={{ y: ["-100%", "300%"] }}
+                          transition={{ duration: 2, repeat: Infinity, ease: "linear", delay: i * 0.4 }}
+                        />
+                    </motion.div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -628,7 +628,6 @@ export default function LandingPage() {
       <HeroSection />
       <FeaturesSection />
       <HowItWorksSection />
-      <TechStackSection />
       <PreviewSection />
       <ArchitectureSection />
       <CTASection />
