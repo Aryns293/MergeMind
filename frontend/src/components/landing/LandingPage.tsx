@@ -622,7 +622,7 @@ function Footer() {
           <span className="text-sm font-semibold">MergeMind AI</span>
         </div>
         <p className="text-sm text-muted-foreground">
-          Built with Next.js, Gemini AI, and Socket.IO
+          Built by Aryan Sharma, DTU. © {new Date().getFullYear()} Copyright Reserved.
         </p>
         <div className="flex items-center gap-4 text-sm text-muted-foreground">
           <Link href="/login" className="hover:text-foreground transition-colors">Sign In</Link>
